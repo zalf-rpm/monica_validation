@@ -110,6 +110,7 @@ const niceTicks = (lo, hi, n = 4) => {
   const step = [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= step0);
   const ticks = [];
   for (let t = Math.ceil(lo / step) * step; t <= hi + 1e-9 * step; t += step) ticks.push(+t.toPrecision(12));
+  ticks.step = step;
   return ticks;
 };
 const short = c => c.slice(0, 10);
@@ -156,7 +157,10 @@ function chart(container, setName, group, metric) {
   const Y = v => m.t + (hi - v) / (hi - lo) * (Ht - m.t - m.b);
   for (const t of ticks) {
     svg.append(el("line", { x1: m.l, x2: W - m.r, y1: Y(t), y2: Y(t), stroke: "var(--grid)", "stroke-width": 1 }));
-    svg.append(el("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end" }, fmt(t)));
+    // as many decimals as the tick spacing needs (fmt's 3 digits could repeat labels)
+    const dec = Math.max(0, -Math.floor(Math.log10(ticks.step) + 1e-9));
+    const label = Math.abs(t) >= 1000 ? Math.round(t).toLocaleString("en") : t.toFixed(Math.min(dec + (ticks.step / 10 ** Math.floor(Math.log10(ticks.step)) % 1 ? 1 : 0), 6));
+    svg.append(el("text", { x: m.l - 6, y: Y(t) + 4, "text-anchor": "end" }, label));
   }
   if (metric === "bias" && lo < 0 && hi > 0)
     svg.append(el("line", { x1: m.l, x2: W - m.r, y1: Y(0), y2: Y(0), stroke: "var(--axis)", "stroke-width": 1 }));
