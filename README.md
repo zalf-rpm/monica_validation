@@ -19,6 +19,11 @@ here, which
   lines, measurements as dots)
 - adds its statistics to `history.json`, which `index.html` shows over time
 
+The releases 3.7.0 to 3.7.4 (the first ones with the Nix flake) were added
+afterwards, on 2026-11-12: built from their tags and run with the scenarios
+of that day and each release's own monica-parameters, so they are comparable
+with the later runs (their messages say so).
+
 `report.html` is a few MB, so it is kept for every release and for the latest
 50 runs only; the statistics of all runs stay.
 
